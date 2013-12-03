@@ -1,5 +1,5 @@
 { "name" : "twoside"
-, "version" : "0.1.0"
+, "version" : "0.1.1"
 , "description" : "make module can be used in both server side and client side"
 , "author" : "Caoxingming <simeon.chaos@gmail.com> (https://github.com/chaosim)"
 , "engines" : { "node" : "*" }

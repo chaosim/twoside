@@ -7,3 +7,4 @@ db
 *.bak
 temp*.*
 .idea
+npm-debug.log

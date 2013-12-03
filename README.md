@@ -40,7 +40,7 @@ see the source code in twoside.js for more information.
   The project's repository is on github <https://github.com/chaosim/twoside>.
 
 ## license
-MIT
+Simplified BSD License, see LICENSE
 
 ## my other npm modules
 peasy: an easy but powerful parser.<br/>
