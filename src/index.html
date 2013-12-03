@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>twoside.js</title>
+</head>
+<body>
+   <h2>twoside.js: make module can be used in both server side and client side.</h2>
+   <h3>How big is twoside.js?</h3>
+   <p> about 1400 bytes after being minified. </p>
+   <h3> what does twoside.js do? </h3>
+   <p> make module can be used in both server side and client side. </p>
+   <h3> what does twoside not do? </h3>
+   <p> twoside.js is not a loader. </p>
+   <p> twoside.js does not process cyclic require in client side. </p>
+
+   <script src="twoside.js"></script>
+   <script src="module1.js"></script>
+   <script src="module2.js"></script>
+   <script src="browsersample.js"></script>
+   <script>
+       require('./twoside')('', function(require){
+           var module1 = require('./module1');
+           module1.something();
+           var module2 = require('./module2');
+           console.log(twoside._modules);
+           console.log(module2)
+//           module2.something();
+           module2.callModule1();
+       })(exports, module);
+   </script>
+</body>
+</html>

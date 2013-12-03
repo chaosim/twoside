@@ -1,0 +1,9 @@
+.DS_Store
+node_modules
+db
+*.sock
+*.map
+*.convert.js
+*.bak
+temp*.*
+.idea

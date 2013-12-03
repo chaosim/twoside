@@ -1,0 +1,23 @@
+{ "name" : "twoside"
+, "version" : "0.1.0"
+, "description" : "make module can be used in both server side and client side"
+, "author" : "Caoxingming <simeon.chaos@gmail.com> (https://github.com/chaosim)"
+, "engines" : { "node" : "*" }
+, "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/chaosim/twoside.git"
+ },
+"bugs" : {
+    "url" : "https://github.com/chaosim/twoside/issues"
+},
+"licenses" : [
+    {
+        "type" : "MIT",
+        "url" : "https://github.com/chaosim/twoside/raw/master/LICENSE"
+    }
+],
+"main": "src/twoside.js",
+"scripts": {
+    "test": "node src/nodesample.js"
+}
+}
