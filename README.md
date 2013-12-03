@@ -13,7 +13,7 @@ Just copy twoside.js to your folder.
 <p> twoside.js does not process cyclic require in client side. </p>
 
 ## usage
-  in browser, just add <script src="path/to/twoside.js"> before the modules you need export and require.
+  in browser, just add `<script src="path/to/twoside.js">` before the modules you need export and require.
   in module, wrap real content with the code like below:
       require('path/to/twoside')('/module1', function(require, exports){
       // require('./twoside')('/module1', function(require){
