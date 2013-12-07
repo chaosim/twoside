@@ -1,6 +1,6 @@
 
 # Installation
-Just ·npm install twoside·, and then copy twoside.js to your folder.
+Just npm install twoside, and then copy twoside.js to your folder.
 
 # description
 make module can be used in both server side and client side.

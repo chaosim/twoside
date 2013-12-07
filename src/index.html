@@ -19,15 +19,12 @@
    <script src="module2.js"></script>
    <script src="browsersample.js"></script>
    <script>
-       require('./twoside')('', function(require){
+       require('./twoside')('', exports, module, function(require){
            var module1 = require('./module1');
            module1.something();
            var module2 = require('./module2');
-           console.log(twoside._modules);
-           console.log(module2)
-//           module2.something();
            module2.callModule1();
-       })(exports, module);
+       })
    </script>
 </body>
 </html>
