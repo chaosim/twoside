@@ -2,6 +2,9 @@
 # Installation
 Just npm install twoside, and then copy twoside.js to your folder.
 
+# wath' new in 0.1.3
+* fix: make karma test runner happy.
+
 # description
 make module can be used in both server side and client side.
 

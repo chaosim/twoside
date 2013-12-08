@@ -6,20 +6,18 @@
 
 (function() {
   (function() {
-    var inBrowser, normalize, root, twoside;
-    root = null;
+    var inBrowser, normalize, twoside;
     inBrowser = function() {
       return typeof window === 'object' && typeof exports !== 'object';
     };
     if (inBrowser()) {
-      root = this;
-      if (root.exports === void 0) {
-        root.exports = null;
+      if (window.exports === void 0) {
+        window.exports = null;
       }
-      if (root.module === void 0) {
-        root.module = null;
+      if (window.module === void 0) {
+        window.module = null;
       }
-      twoside = root.twoside = {
+      twoside = window.twoside = {
         _modules: {}
       };
       /* To make node.js happy, we can alias some external module.*/
@@ -51,9 +49,9 @@
         head = path.charAt(0) === '/' || path.charAt(0) === '.' ? '/' : '';
         return head + target.join('/').replace(/[\/]{2,}/g, '/');
       };
-      return root.require = function(twosidePath) {
+      return window.require = function(twosidePath) {
         if (twosidePath.slice(twosidePath.length - 7) !== 'twoside') {
-          return root.oldRequire(twosidePath);
+          return window.oldRequire(twosidePath);
         }
         return function(path, _, __, define) {
           var exports, module, modulePath, require;
@@ -69,7 +67,7 @@
             }
             module = twoside._modules[path];
             if (!module) {
-              throw path + ' is undefined.';
+              throw 'module: ' + path + ' is undefined.';
             }
             return module.exports;
           };

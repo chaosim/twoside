@@ -2,18 +2,15 @@
 # make modules can be used on both server side and client side.
 ###
 ( ->
-  root = null
   inBrowser = -> typeof window == 'object' and typeof exports != 'object'
   if inBrowser()
-    root = this
-    if root.exports is undefined then root.exports  = null
-    if root.module is undefined then root.module = null
-    twoside = root.twoside = _modules: {}
+    if window.exports is undefined then window.exports  = null
+    if window.module is undefined then window.module = null
+    twoside = window.twoside = _modules: {}
     ### To make node.js happy, we can alias some external module.###
     twoside.alias = (path, object) -> twoside._modules[path] = {exports: object}
     ### e.g. n browser, if underscore have been imported before, we can alias it like below: ###
-    # twoside.alias('underscore', _)
-
+#    twoside.alias('underscore', _)
     normalize = (path) ->
       if !path || path == '/' then return '/'
       target = []
@@ -24,8 +21,8 @@
       head = if path.charAt(0)=='/' or path.charAt(0)=='.' then '/' else ''
       head + target.join('/').replace(/[\/]{2,}/g, '/')
 
-    root.require = (twosidePath) ->
-      if (twosidePath.slice(twosidePath.length-7)!='twoside') then return root.oldRequire(twosidePath)
+    window.require = (twosidePath) ->
+      if (twosidePath.slice(twosidePath.length-7)!='twoside') then return window.oldRequire(twosidePath)
       (path, _, __, define) ->
         path = normalize(path)
         exports  = {}
@@ -34,7 +31,7 @@
         require = (path) ->
           if (path[0]=='.') then path = normalize(modulePath+path)
           module = twoside._modules[path]
-          if !module then throw path+' is undefined.'
+          if !module then throw 'module: '+path+' is undefined.'
           module.exports
         define(require, exports, module)
 
@@ -43,7 +40,7 @@
 ).call(this)
 
 # coffee-script sample
-# require('twoside') '/browsersample', exports, module, function(require, exports, module) ->
+# require('./twoside') '/browsersample', exports, module, (require, exports, module) ->
 #   indent module definition
 
 ### javascript sample
