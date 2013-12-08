@@ -34,10 +34,13 @@ In module, wrap the real module code with the lines like below:
     });
 
 If you prefer coffee-script, just add this line to your module and indent all of you code:
+
     require('twoside')('/module1', exports, module, (require, exports, module) ->
       # your module code is here.
 
-for client side's external module, alias can be added by `twoside.alias(name, object)`. e.g. `twoside.alias('underscore', _)`.
+for client side's external module, alias can be added by `twoside.alias(name, object)`. e.g.
+
+    `twoside.alias('underscore', _)`.
 
 see the source code in twoside.js for more information.  
 
