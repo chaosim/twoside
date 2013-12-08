@@ -40,7 +40,7 @@ If you prefer coffee-script, just add this line to your module and indent all of
 
 for client side's external module, alias can be added by `twoside.alias(name, object)`. e.g.
 
-    `twoside.alias('underscore', _)`.
+    twoside.alias('underscore', _);
 
 see the source code in twoside.js for more information.  
 
