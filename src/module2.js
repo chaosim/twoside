@@ -1,6 +1,8 @@
 // module2.js
-
-require('./twoside')('/module2', exports, module, function(require, exports){
+if (typeof window == 'object') {
+  var m = twoside('/module2'), require = m.require, exports= m.exports, module = m.module;
+}
+(function(require, module1, module){
 
 var module1 = require('./module1');
 console.log('in module2');
@@ -13,4 +15,4 @@ exports.something = function(){
   return 'something in module2'
 }
 
-})
+})(require, exports, module)

@@ -6,85 +6,68 @@
 
 (function() {
   (function() {
-    var inBrowser, normalize, twoside;
-    inBrowser = function() {
-      return typeof window === 'object' && typeof exports !== 'object';
+    var normalize, twoside;
+    twoside = window.twoside = function(path) {
+      var exports, module, modulePath, require;
+      path = normalize(path);
+      exports = {};
+      module = twoside._modules[path] = {
+        exports: exports
+      };
+      modulePath = path.slice(0, path.lastIndexOf("/") + 1);
+      require = function(path) {
+        path = normalize(modulePath + path);
+        module = twoside._modules[path];
+        if (!module) {
+          throw path + ' is a wrong twoside module path.';
+        }
+        return module.exports;
+      };
+      return {
+        require: require,
+        exports: exports,
+        module: module
+      };
     };
-    if (inBrowser()) {
-      if (window.exports === void 0) {
-        window.exports = null;
+    twoside._modules = {};
+    /* we can alias some external modules.*/
+
+    twoside.alias = function(path, object) {
+      return twoside._modules[path] = {
+        exports: object
+      };
+    };
+    /* e.g. n browser, if underscore have been imported before, we can alias it like below:*/
+
+    /* twoside.alias('underscore', _)*/
+
+    return normalize = function(path) {
+      var head, target, token, _i, _len, _ref;
+      if (!path || path === '/') {
+        return '/';
       }
-      if (window.module === void 0) {
-        window.module = null;
+      target = [];
+      _ref = path.split('/');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        token = _ref[_i];
+        if (token === '..') {
+          target.pop();
+        } else if (token !== '' && token !== '.') {
+          target.push(token);
+        }
       }
-      twoside = window.twoside = {
-        _modules: {}
-      };
-      /* To make node.js happy, we can alias some external module.*/
+      /* for IE 6 & 7 - use path.charAt(i), not path[i]*/
 
-      twoside.alias = function(path, object) {
-        return twoside._modules[path] = {
-          exports: object
-        };
-      };
-      /* e.g. n browser, if underscore have been imported before, we can alias it like below:*/
-
-      normalize = function(path) {
-        var head, target, token, _i, _len, _ref;
-        if (!path || path === '/') {
-          return '/';
-        }
-        target = [];
-        _ref = path.split('/');
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          token = _ref[_i];
-          if (token === '..') {
-            target.pop();
-          } else if (token !== '' && token !== '.') {
-            target.push(token);
-          }
-        }
-        /* for IE 6 & 7 - use path.charAt(i), not path[i]*/
-
-        head = path.charAt(0) === '/' || path.charAt(0) === '.' ? '/' : '';
-        return head + target.join('/').replace(/[\/]{2,}/g, '/');
-      };
-      return window.require = function(twosidePath) {
-        if (twosidePath.slice(twosidePath.length - 7) !== 'twoside') {
-          return window.oldRequire(twosidePath);
-        }
-        return function(path, _, __, define) {
-          var exports, module, modulePath, require;
-          path = normalize(path);
-          exports = {};
-          module = twoside._modules[path] = {
-            exports: exports
-          };
-          modulePath = path.slice(0, path.lastIndexOf("/") + 1);
-          require = function(path) {
-            if (path[0] === '.') {
-              path = normalize(modulePath + path);
-            }
-            module = twoside._modules[path];
-            if (!module) {
-              throw 'module: ' + path + ' is undefined.';
-            }
-            return module.exports;
-          };
-          return define(require, exports, module);
-        };
-      };
-    } else {
-      return module.exports = function(path, exports, module, define) {
-        return define(require, exports, module);
-      };
-    }
-  }).call(this);
+      head = path.charAt(0) === '/' || path.charAt(0) === '.' ? '/' : '';
+      return head + target.join('/').replace(/[\/]{2,}/g, '/');
+    };
+  })();
 
   /* javascript sample
-  require('./twoside')('/browsersample', exports, module, function(require, exports, module){
+  var m = twoside('/module1'), exports= m.exports, module = m.module, require = m.module;
+  (function(require, exports, module){
     // wrapped module definition
-  });
+  })(require, exports, module);
   */
 
 
