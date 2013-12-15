@@ -64,7 +64,7 @@
   })();
 
   /* javascript sample
-  var m = twoside('/module1'), exports= m.exports, module = m.module, require = m.module;
+  if (typeof window==='object'){ var m = twoside('/module1'), exports= m.exports, module = m.module, require = m.module; }
   (function(require, exports, module){
     // wrapped module definition
   })(require, exports, module);

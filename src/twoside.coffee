@@ -29,12 +29,12 @@ do ->
     head + target.join('/').replace(/[\/]{2,}/g, '/')
 
 # coffee-script sample
-# {require, exports, module} = twoside('/module1')
+# if typeof window=='object' then {require, exports, module} = twoside('/module1')
 # do (require=require, exports=exports, module=module) ->
 #   indent module definition
 
 ### javascript sample
-var m = twoside('/module1'), exports= m.exports, module = m.module, require = m.module;
+if (typeof window==='object'){ var m = twoside('/module1'), exports= m.exports, module = m.module, require = m.module; }
 (function(require, exports, module){
   // wrapped module definition
 })(require, exports, module);
