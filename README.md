@@ -26,17 +26,18 @@ In browser, just add `<script src="path/to/twoside.js">` before the modules that
 
 In module, wrap the real module code with the lines like below:
 
-    require('twoside')('/module1', exports, module, function(require, exports, module){
-
-    var x = require('someModule');
-    // exports.something = ......
-
-    });
+    if (typeof window==='object'){ var m = twoside('/module1'), exports= m.exports, module = m.module, require = m.module; }
+    (function(require, exports, module){
+      // wrapped module definition
+    })(require, exports, module);
 
 If you prefer coffee-script, just add this line to your module and indent all of you code:
 
-    require('twoside')('/module1', exports, module, (require, exports, module) ->
-      # your module code is here.
+    if typeof window=='object' then {require, exports, module} = twoside('/module1')
+    do (require=require, exports=exports, module=module) ->
+      indent module definition
+
+### javascript sample
 
 for client side's external module, alias can be added by `twoside.alias(name, object)`. e.g.
 
