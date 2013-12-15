@@ -2,12 +2,20 @@
 # make modules can be used on both server side and client side.
 ###
 do ->
+  oldrequire = window.require
+  oldexports = window.exports
+  oldmodule = window.module
   twoside = window.twoside = (path) ->
+    window.require = oldrequire
+    window.exports = oldexports
+    window.module = oldmodule
     path = normalize(path)
     exports  = {}
     module = twoside._modules[path] = {exports:exports}
     modulePath =  path.slice(0, path.lastIndexOf("/")+1)
     require = (path) ->
+      module  = twoside._modules[path]
+      if module then return module
       path = normalize(modulePath+path)
       module = twoside._modules[path]
       if !module then throw path+' is a wrong twoside module path.'
@@ -15,9 +23,10 @@ do ->
     {require:require, exports:exports, module:module}
   twoside._modules = {}
   ### we can alias some external modules.###
-  twoside.alias = (path, object) -> twoside._modules[path] = {exports: object}
+  twoside.alias = (path, object) -> twoside._modules[path] = object
   ### e.g. n browser, if underscore have been imported before, we can alias it like below: ###
-  ### twoside.alias('underscore', _) ###
+  twoside.alias('underscore', _)
+
   normalize = (path) ->
     if !path || path == '/' then return '/'
     target = []
