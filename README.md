@@ -2,8 +2,8 @@
 # Installation
 Just npm install twoside, and then copy twoside.js to your folder.
 
-# what's new in 0.1.5
-* save initial window.require, window.exports, window.module on running twoside.js, restore them when twoside(path) is called.
+# what's new in 0.1.6
+* just fix description in readme.md.
 
 # description
 make module can be used in both server side and client side.
