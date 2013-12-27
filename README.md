@@ -2,8 +2,8 @@
 # Installation
 Just npm install twoside, and then copy twoside.js to your folder.
 
-# what's new in 0.1.6
-* just fix description in readme.md.
+# what's new in 0.1.7
+* display stack trace on console when require(path) get a wrong path, which should be helpful for debugging.
 
 # description
 make module can be used in both server side and client side.
@@ -51,13 +51,5 @@ see the source code in twoside.js for more information.
 ## license
 Simplified BSD License, see LICENSE
 
-## my other npm modules
-peasy: an easy but powerful parser.<br/>
-npm install peasy, https://npmjs.org/package/peasy, https://github.com/chaosim/peasy<br/>
-
-daonode: functional logic solver and compiler.<br/>
-npm install daonode, https://npmjs.org/package/daonode, https://github.com/chaosim/daonode<br/>
-
-node-utilities: an easy but powerful parser.<br/>
-npm install node-utilities, https://npmjs.org/package/node-utilities, https://github.com/chaosim/node-utils<br/>
-
+## my bower module
+  a simple multiple panes splitter for angularjs: https://github.com/chaosim/splitter   bower install splitter

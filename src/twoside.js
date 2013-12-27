@@ -6,10 +6,16 @@
 
 (function() {
   (function() {
-    var normalize, oldexports, oldmodule, oldrequire, twoside;
+    var getStackTrace, normalize, oldexports, oldmodule, oldrequire, twoside;
     oldrequire = window.require;
     oldexports = window.exports;
     oldmodule = window.module;
+    getStackTrace = function() {
+      var obj;
+      obj = {};
+      Error.captureStackTrace(obj, getStackTrace);
+      return obj.stack;
+    };
     twoside = window.twoside = function(path) {
       var exports, module, modulePath, require;
       window.require = oldrequire;
@@ -29,6 +35,7 @@
         path = normalize(modulePath + path);
         module = twoside._modules[path];
         if (!module) {
+          console.log(getStackTrace());
           throw path + ' is a wrong twoside module path.';
         }
         return module.exports;
@@ -47,7 +54,8 @@
     };
     /* e.g. n browser, if underscore have been imported before, we can alias it like below:*/
 
-    twoside.alias('underscore', _);
+    /* twoside.alias('underscore', _)*/
+
     return normalize = function(path) {
       var head, target, token, _i, _len, _ref;
       if (!path || path === '/') {

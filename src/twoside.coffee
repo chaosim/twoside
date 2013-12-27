@@ -5,6 +5,10 @@ do ->
   oldrequire = window.require
   oldexports = window.exports
   oldmodule = window.module
+  getStackTrace = ->
+    obj = {}
+    Error.captureStackTrace(obj, getStackTrace)
+    obj.stack
   twoside = window.twoside = (path) ->
     window.require = oldrequire
     window.exports = oldexports
@@ -18,14 +22,16 @@ do ->
       if module then return module
       path = normalize(modulePath+path)
       module = twoside._modules[path]
-      if !module then throw path+' is a wrong twoside module path.'
+      if !module
+        console.log(getStackTrace())
+        throw path+' is a wrong twoside module path.'
       module.exports
     {require:require, exports:exports, module:module}
   twoside._modules = {}
   ### we can alias some external modules.###
   twoside.alias = (path, object) -> twoside._modules[path] = object
   ### e.g. n browser, if underscore have been imported before, we can alias it like below: ###
-  twoside.alias('underscore', _)
+  ### twoside.alias('underscore', _) ###
 
   normalize = (path) ->
     if !path || path == '/' then return '/'
