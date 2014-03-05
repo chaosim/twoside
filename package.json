@@ -19,5 +19,9 @@
 "main": "src/twoside.js",
 "scripts": {
     "test": "node src/nodesample.js"
+},
+"dependencies": {},
+"devDependencies": {
+  "karma-html-reporter": "~0.1.1"
 }
 }

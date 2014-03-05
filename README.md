@@ -2,8 +2,13 @@
 # Installation
 Just npm install twoside, and then copy twoside.js to your folder.
 
-# what's new in 0.1.7
+# what's new in 0.1.8 #2014-3-5
 * display stack trace on console when require(path) get a wrong path, which should be helpful for debugging.
+todo:
+  ok: modify gulp to wrap twoside modules
+  coding: modify twoside.js, to play with index.js and require folder.
+  modify twoside.js, to play with node-modules
+  modify twoside.js, to asynchronius require.
 
 # description
 make module can be used in both server side and client side.

@@ -1,8 +1,4 @@
-function assert(condition, message) {
-  if (!condition) {
-    throw message || "Assertion failed";
-  }
-}
+var assert = require('assert');
 var module1 = require('./module1');
 var module2 = require('./module2');
 assert(module1.something()=='something in module1');
