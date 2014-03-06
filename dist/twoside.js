@@ -1,41 +1,78 @@
 
-/* modules/twoside
- * make modules can be used on both server side and client side.
+/* twoside.js(generated from twoside.coffee)
+make modules can be used on both server side and client side.
+use gulp-twoside to wrap your module.
+
+below is a sample module that have been wrapped by gulp-twoside:
+
+// wrap lines by gulp-twoside for providing twoside module
+(function(){
+var exports, module, require, ts;
+if (typeof window === 'object') { ts = twoside('twoside-sample/module1.js'), require = ts.require, exports = ts.exports, module = ts.module;}
+(function(require, exports, module) {
+
+
+// module1.js
+
+exports.something = function(){
+  console.log('in module1');
+  return 'something in module1'
+}
+
+// wrap line by gulp-twoside
+})(require, exports, module);
+})(this);
  */
 (function() {
-  var getStackTrace, normalize, oldexports, oldmodule, oldrequire, twoside;
-  oldrequire = window.require;
-  oldexports = window.exports;
-  oldmodule = window.module;
+  var getStackTrace, normalize, removeExtname, twoside;
   getStackTrace = function() {
     var obj;
     obj = {};
     Error.captureStackTrace(obj, getStackTrace);
     return obj.stack;
   };
+  removeExtname = function(path) {
+    var length;
+    length = path.length;
+    if (path.slice(length - 3) === '.js') {
+      return path.slice(0, length - 3);
+    } else if (path.slice(length - 7) === '.coffee') {
+      return path.slice(0, length - 7);
+    } else {
+      return path;
+    }
+  };
   twoside = window.twoside = function(path) {
-    var exports, module, modulePath, require;
-    window.require = oldrequire;
-    window.exports = oldexports;
-    window.module = oldmodule;
-    path = normalize(path);
+    var exports, filename, lastSlashIndex, module, modulePath, require;
+    lastSlashIndex = path.lastIndexOf("/");
+    if (lastSlashIndex >= 0) {
+      modulePath = path.slice(0, lastSlashIndex);
+      filename = removeExtname(path.slice(lastSlashIndex + 1));
+    } else {
+      console.log(getStackTrace());
+      throw 'should give a proper twoside module path.';
+    }
+    path = removeExtname(normalize(path));
     exports = {};
     module = twoside._modules[path] = {
       exports: exports
     };
-    modulePath = path.slice(0, path.lastIndexOf("/") + 1);
+    if (filename === 'index') {
+      twoside._modules[modulePath] = module;
+    }
     require = function(path) {
-      module = twoside._modules[path];
-      if (module) {
-        return module;
+      var requiredModule;
+      requiredModule = twoside._modules[path];
+      if (requiredModule) {
+        return requiredModule.exports;
       }
-      path = normalize(modulePath + path);
-      module = twoside._modules[path];
-      if (!module) {
+      path = normalize(modulePath + '/' + removeExtname(path));
+      requiredModule = twoside._modules[path];
+      if (!requiredModule) {
         console.log(getStackTrace());
         throw path + ' is a wrong twoside module path.';
       }
-      return module.exports;
+      return requiredModule.exports;
     };
     return {
       require: require,
@@ -49,10 +86,6 @@
   twoside.alias = function(path, object) {
     return twoside._modules[path] = object;
   };
-
-  /* e.g. n browser, if underscore have been imported before, we can alias it like below: */
-
-  /* twoside.alias('underscore', _) */
   return normalize = function(path) {
     var head, target, token, _i, _len, _ref;
     if (!path || path === '/') {
@@ -74,11 +107,3 @@
     return head + target.join('/').replace(/[\/]{2,}/g, '/');
   };
 })();
-
-
-/* javascript sample
-if (typeof window==='object'){ var m = twoside('/module1'), exports= m.exports, module = m.module, require = m.module; }
-(function(require, exports, module){
-  // wrapped module definition
-})(require, exports, module);
- */

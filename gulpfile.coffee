@@ -16,7 +16,6 @@ mocha = require('gulp-mocha')
 karma = require('gulp-karma')
 twoside = require './gulp-twoside'
 
-
 #pluginwatch = require('gulp-watch')
 #styl = require('gulp-styl')
 
@@ -74,20 +73,24 @@ folders =
   destjs: 'dist'
   pulic: 'public'
   static: 'static'
+  twosideInNpm: 'node_modules/twoside-in-npm'
 
 files =
   copy: (folders.src+'/'+name for name in ['**/*.js', '**/*.json', '**/*.jade', '**/*.html', '**/*.css', '**/*.tjv'])
   coffee: [folders.coffee+'/**/*.coffee']
+  twosideInNpmCoffee: [folders.twosideInNpm+'/**/*.coffee']
   mocha: folders.destjs+'/test/mocha/**/*.js'
   karma: folders.destjs+'/test/karma/**/*.js'
   modulejs: folders.destjs+'/lib/modules/**/*.js'
   serverjs: folders.destjs+'/lib/server/**/*.js'
-  twoside: [folders.destjs+'/module1.js', folders.destjs+'/module2.js', folders.destjs+'/browsersample.js']
+  twoside: [folders.destjs+'/module1.js', folders.destjs+'/module2.js', folders.destjs+'/module3.js', folders.destjs+'/browsersample.js']
+  twosideInNpm: [folders.twosideInNpm+'/**/*.js']
   reload: ['*.html', folders.destjs+'/client/**/*.js', folders.destjs+'/modules/**/*.js', 'public/**/*.js', 'public/**/*.css']
 
-files.concat = [folders.destjs+'/twoside.js'].concat files.twoside
+twosideInNpm = folders.twosideInNpm
+files.concat = [folders.destjs+'/twoside.js'].concat([twosideInNpm+'/npm1.js', twosideInNpm+'/index.js']).concat(files.twoside)
 
-task 'clean', -> src([folders.destjs], {read:false}) .pipe(clean())
+task 'clean', -> src([folders.destjs].concat(files.twosideInNpm), {read:false}) .pipe(clean())
 task 'runapp', shell.task ['node dist/examples/sockio/app.js']
 task 'express',  ->
   app = express()
@@ -96,10 +99,15 @@ task 'express',  ->
   app.use(express.static(__dirname))
   app.listen(4000)
 task 'copy', -> from(files.copy, {cache:'copy'}).to(folders.destjs)
-task 'coffee', -> from(files.coffee, {cache:'coffee'}).pipelog(coffee({bare: true})).to(folders.destjs)
+task 'coffee', ->
+  from(files.coffee, {cache:'coffee'}).pipelog(coffee({bare: true})).to(folders.destjs)
+  from(files.twosideInNpmCoffee, {cache:'coffee2'}).pipelog(coffee({bare: true})).to(folders.twosideInNpm)
+
 task 'twoside', ['copy', 'coffee'], (cb) ->
-  for pattern in patterns(files.twoside...)
-    stream = src(pattern.src).pipelog(twoside('f:/twoside/dist', 'twoside-sample')).to(pattern.dest)
+  for pat in patterns(files.twoside...)
+    stream = src(pat.src).pipelog(twoside('f:/twoside/dist', 'twoside-sample')).to(pat.dest)
+  for pat in patterns(files.twosideInNpm...)
+    stream = src(pat.src).pipelog(twoside('f:/twoside/'+folders.twosideInNpm, 'twoside-in-npm')).to(pat.dest)
   stream
 gulp.task 'browserify', ['coffee'], ->
   src(folders.destjs+'/test/karma/karma-bundle.js').pipe(browserify({
@@ -108,8 +116,18 @@ gulp.task 'browserify', ['coffee'], ->
   }))
   .to(folders.destjs+'/test/karma')
 gulp.task 'concat', ['twoside'], ->
+#  twosideInNpm = folders.twosideInNpm
+#  src([twosideInNpm+'/npm1.js', twosideInNpm+'/index.js']).pipe(concat('twoside-in-npm.js'))
+#  .to(folders.twosideInNpm)
   src(files.concat).pipe(concat("twoside-sample.js")).to(folders.destjs)
-gulp.task 'min', ['concat'], -> src(folders.destjs+'/twoside-sample.js').pipe(closureCompiler()).pipe(rename(suffix: "-min")).pipe(size(showFiles:true)).to(folders.destjs)
+
+gulp.task 'min', ['concat'], ->
+  src(folders.destjs+'/twoside-sample.js').pipe(closureCompiler()).pipe(rename(suffix: "-min"))
+  .pipe(size(showFiles:true)).to(folders.destjs)
+  src(folders.destjs+'/twoside.js').pipe(closureCompiler()).pipe(rename(suffix: "-min"))
+  .pipe(size(showFiles:true)).to(folders.destjs)
+#  src(folders.twosideInNpm+'/twoside-in-npm.js').pipe(closureCompiler()).pipe(rename(suffix: "-min"))
+#  .pipe(size(showFiles:true)).to(folders.twosideInNpm)
 
 onErrorContinue = (err) -> console.log(err.stack); @emit 'end'
 #onErrorContinue = (err) -> @emit 'end'
@@ -135,4 +153,3 @@ task 'watch/all', -> ['watch/copy', 'watch/coffee', 'watch/mocha', 'watch/reload
 task 'build', ['copy', 'min']
 task 'mocha/auto', ['watch/copy', 'watch/coffee', 'watch/mocha']
 task 'default',['build', 'watch:all']
-

@@ -1,27 +1,37 @@
-{ "name" : "twoside"
-, "version" : "0.1.7"
-, "description" : "make module can be used in both server side and client side"
-, "author" : "Caoxingming <simeon.chaos@gmail.com> (https://github.com/chaosim)"
-, "engines" : { "node" : "*" }
-, "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/chaosim/twoside.git"
- },
-"bugs" : {
-    "url" : "https://github.com/chaosim/twoside/issues"
-},
-"licenses" : [
+{ "name": "twoside",
+  "version": "0.1.8",
+  "description": "make module can be used in both server side and client side",
+  "author": "Caoxingming <simeon.chaos@gmail.com> (https://github.com/chaosim)",
+  "engines": {
+    "node": "*"
+  },
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/chaosim/twoside.git"
+  },
+  "bugs": {
+      "url": "https://github.com/chaosim/twoside/issues"
+    },
+  "licenses": [
     {
-        "type" : "MIT",
-        "url" : "https://github.com/chaosim/twoside/raw/master/LICENSE"
+      "type": "MIT",
+      "url": "https://github.com/chaosim/twoside/raw/master/LICENSE"
     }
-],
-"main": "src/twoside.js",
-"scripts": {
+  ],
+  "main": "dist/twoside.js",
+  "scripts": {
     "test": "node src/nodesample.js"
-},
-"dependencies": {},
-"devDependencies": {
-  "karma-html-reporter": "~0.1.1"
-}
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-clean": "*",
+    "gulp-copy": "*",
+    "gulp-coffee": "*",
+    "coffee-script": "1.7.0",
+    "gulp-concat": "*",
+    "gulp-closure-compiler": "*",
+    "gulp-size": "*",
+    "gulp-uglifyjs":"*"
+  }
 }

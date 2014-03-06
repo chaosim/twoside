@@ -1,4 +1,6 @@
-### https://github.com/rgrove/lazyload ###
+### https://github.com/rgrove/lazyload
+this module is ported from lazyload, and it is not yet finished, and should not be used.
+###
 
 LazyLoad = do (doc=@document) ->
   pending = {}
@@ -50,6 +52,6 @@ LazyLoad = do (doc=@document) ->
             finish()
       else node.onload = node.onerror = finish
       nodes.push(node)
-    for node in nodes then head.appendChild node      ng
+    for node in nodes then head.appendChild node
 
   load

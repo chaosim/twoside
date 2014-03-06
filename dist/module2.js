@@ -1,8 +1,7 @@
 // wrap lines by gulp-twoside for providing twoside module
-(function(){
-var exports, module, require, ts;
+var exports, module, require;
+(function(require, exports, module) {var ts;
 if (typeof window === 'object') { ts = twoside('twoside-sample/module2.js'), require = ts.require, exports = ts.exports, module = ts.module;} 
-(function(require, exports, module) {
 // module2.js
 var module1 = require('./module1');
 console.log('in module2');
@@ -13,5 +12,6 @@ exports.callModule1 = function(){
 exports.something = function(){
   console.log('something in module2');
   return 'something in module2'
-}})(require, exports, module); // wrap line by gulp-twoside
-})(this)
+}
+// wrap line by gulp-twoside
+})(require, exports, module);

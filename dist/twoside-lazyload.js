@@ -1,5 +1,7 @@
 
-/* https://github.com/rgrove/lazyload */
+/* https://github.com/rgrove/lazyload
+this module is ported from lazyload, and it is not yet finished, and should not be used.
+ */
 var LazyLoad,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -83,7 +85,7 @@ LazyLoad = (function(doc) {
     _results = [];
     for (_j = 0, _len1 = nodes.length; _j < _len1; _j++) {
       node = nodes[_j];
-      _results.push(head.appendChild(node(ng)));
+      _results.push(head.appendChild(node));
     }
     return _results;
   };
