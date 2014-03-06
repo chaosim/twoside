@@ -6,12 +6,9 @@ use gulp-twoside to wrap your module.
 below is a sample module that have been wrapped by gulp-twoside:
 
 // wrap lines by gulp-twoside for providing twoside module
-(function(){
-var exports, module, require, ts;
-if (typeof window === 'object') { ts = twoside('twoside-sample/module1.js'), require = ts.require, exports = ts.exports, module = ts.module;}
+var exports, module, require;
 (function(require, exports, module) {
-
-
+ if (typeof window === 'object') { ts = twoside('twoside-sample/module1.js'), require = ts.require, exports = ts.exports, module = ts.module;}
 // module1.js
 
 exports.something = function(){
@@ -21,7 +18,6 @@ exports.something = function(){
 
 // wrap line by gulp-twoside
 })(require, exports, module);
-})(this);
  */
 (function() {
   var getStackTrace, normalize, removeExtname, twoside;
