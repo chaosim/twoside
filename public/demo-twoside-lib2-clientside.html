@@ -17,10 +17,9 @@
    <p> please open console to see test result.</p>
 
 
-   <script src="../dist/twoside-sample.js"></script>
-   <script src="../dist/lib/lib1.js"></script>
-   <script src="../dist/lib/lib2.js"></script>
-   <script src="../dist/lib/index.js"></script>
+   <script src="../dist/clientside/twoside-sample.js"></script>
+   <script src="../dist/lib/clientside/lib1.js"></script>
+   <script src="../dist/lib/clientside/lib2-as-browser-lib-package.js"></script>
    <!--<script src="../node_modules/twoside-in-npm/twoside-in-npm.js"></script>-->
    <script>
        var location
@@ -37,10 +36,10 @@
            module1.something();
            module2 = require('./module2');
            module2.callModule1();
-           lib = require('lib-package');
+           lib = require('browser-lib-package');
            lib.something1();
            lib.something2();
-           var twosideInNpm = require('twoside-in-npm');
+           var twosideInNpm = require('browser-twoside-in-npm');
            console.log(JSON.stringify(twoside._modules));
            console.log(JSON.stringify(twosideInNpm));
            twosideInNpm.methodInIndex()

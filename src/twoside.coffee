@@ -40,8 +40,8 @@ do ->
       modulePath =  path.slice(0, lastSlashIndex)
       filename = removeExtname(path.slice(lastSlashIndex+1))
     else
-      console.log(getStackTrace())
-      throw 'should give a proper twoside module path.'
+      modulePath = path
+      filename = ''
     path = removeExtname(normalize(path))
     exports  = {}
     module = twoside._modules[path] = {exports:exports}

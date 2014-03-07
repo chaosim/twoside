@@ -8,3 +8,6 @@ db
 temp*.*
 .idea
 npm-debug.log
+dist
+dev
+dist

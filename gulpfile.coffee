@@ -8,29 +8,17 @@ clean = require('gulp-clean')
 shell = require 'gulp-shell'
 rename = require("gulp-rename")
 coffee = require ('gulp-coffee')
-browserify = require('gulp-browserify')
 concat = require('gulp-concat')
 closureCompiler = require('gulp-closure-compiler')
 size = require('gulp-size')
-mocha = require('gulp-mocha')
-karma = require('gulp-karma')
 twoside = require './gulp-twoside'
-
-#pluginwatch = require('gulp-watch')
-#styl = require('gulp-styl')
-
-express = require('express')
-
-#http://rhumaric.com/2014/01/livereload-magic-gulp-style/
-livereload = require('gulp-livereload')
-tinylr = require('tiny-lr')
 
 task = gulp.task.bind(gulp)
 watch = gulp.watch.bind(gulp)
 src = gulp.src.bind(gulp)
 dest = gulp.dest.bind(gulp)
-from = (source, options={dest:folders.destjs, cache:'cache'}) ->
-  options.dest ?= folders.destjs
+from = (source, options={dest:folders_destjs, cache:'cache'}) ->
+  options.dest ?= folders_destjs
   options.cache ?= 'cache'
   src(source).pipe(changed(options.dest)).pipe(cache(options.cache)).pipe(plumber())
 GulpStream = src('').constructor
@@ -38,10 +26,13 @@ GulpStream::to = (dst) -> @pipe(dest(dst))#.pipe(livereload(tinylrServer))
 GulpStream::pipelog = (obj, log=gutil.log) -> @pipe(obj).on('error', log)
 
 rootOf = (path) -> path.slice(0, path.indexOf('/'))
-
 midOf = (path) ->
   if (last=path.indexOf('/*'))<0 then last = path.lastIndexOf('/')
   path.slice(path.indexOf('/')+1, last)
+
+# below will put output js files in wrong directory structure!!!
+# coffee: [coffeeroot+'/*.coffee', coffeeroot+'/samples/**/*.coffee', coffeeroot+'/test/**/*.coffee']
+# use the code below to solve this problem
 patterns = (args...) ->
   for arg in args
     if typeof arg =='string' then pattern(arg)
@@ -57,99 +48,67 @@ class Pattern
     srcRoot = rootOf(@src)
     if not @destbase then @destbase = srcRoot
     if not options.desttail? then @desttail = midOf(@src)
-    console.log 'src:'+@src+' desttail:'+@desttail
+#    console.log 'src:'+@src+' desttail:'+@desttail
     if @desttail then @dest = @destbase+'/'+@desttail
     else @dest = @destbase
 
-# below will put output js files in wrong directory structure!!!
-# coffee: [coffeeroot+'/*.coffee', coffeeroot+'/samples/**/*.coffee', coffeeroot+'/test/**/*.coffee']
 
-folders =
-  dest: 'dist'
-  dist: 'dist'
-  dev: 'dev'
-  src: 'src'
-  coffee: 'src'
-  destjs: 'dist'
-  pulic: 'public'
-  static: 'static'
-  twosideInNpm: 'node_modules/twoside-in-npm'
+folders_src = 'src'
+folders_coffee = folders_src
+folders_dest = 'dist'
+folders_destjs = folders_dest
+folders_destjsClient = folders_destjs+'/clientside'
+folders_dist = 'dist'
+folders_dev = 'dev'
+folders_pulic = 'public'
+folders_static = 'static'
+folders_twosideInNpm = 'node_modules/twoside-in-npm'
+folders_twosideInNpmClient = folders_twosideInNpm+'/clientside'
 
-files =
-  copy: (folders.src+'/'+name for name in ['**/*.js', '**/*.json', '**/*.jade', '**/*.html', '**/*.css', '**/*.tjv'])
-  coffee: [folders.coffee+'/**/*.coffee']
-  twosideInNpmCoffee: [folders.twosideInNpm+'/**/*.coffee']
-  mocha: folders.destjs+'/test/mocha/**/*.js'
-  karma: folders.destjs+'/test/karma/**/*.js'
-  modulejs: folders.destjs+'/lib/modules/**/*.js'
-  serverjs: folders.destjs+'/lib/server/**/*.js'
-  twoside: [folders.destjs+'/module1.js', folders.destjs+'/module2.js', folders.destjs+'/module3.js', folders.destjs+'/browsersample.js']
-  twosideInNpm: [folders.twosideInNpm+'/**/*.js']
-  reload: ['*.html', folders.destjs+'/client/**/*.js', folders.destjs+'/modules/**/*.js', 'public/**/*.js', 'public/**/*.css']
+files_copy = (folders_src+'/'+name for name in ['**/*.js', '**/*.json', '**/*.jade', '**/*.html', '**/*.css', '**/*.tjv'])
+files_coffee = [folders_coffee+'/**/*.coffee']
+files_twosideInNpmCoffee = [folders_twosideInNpm+'/**/*.coffee']
+files_twoside = [folders_destjs+'/module1.js', folders_destjs+'/module2.js', folders_destjs+'/module3.js', folders_destjs+'/browsersample.js']
+files_twosideClient = [folders_destjsClient+'/module1.js', folders_destjsClient+'/module2.js', folders_destjsClient+'/module3.js', folders_destjsClient+'/browsersample.js']
+files_twosideInNpm = [folders_twosideInNpm+'/**/*.js']
+files_twosideInNpmClient = [folders_twosideInNpmClient+'/**/*.js']
 
-twosideInNpm = folders.twosideInNpm
-files.concat = [folders.destjs+'/twoside.js'].concat([twosideInNpm+'/npm1.js', twosideInNpm+'/index.js']).concat(files.twoside)
+files_concat = [folders_destjs+'/twoside.js'].concat([folders_twosideInNpm+'/npm1.js', folders_twosideInNpm+'/index.js']).concat(files_twoside)
+files_concatClient = [folders_destjs+'/twoside.js'].concat([folders_twosideInNpmClient+'/npm1.js', folders_twosideInNpmClient+'/index.js']).concat(files_twosideClient)
 
-task 'clean', -> src([folders.destjs].concat(files.twosideInNpm), {read:false}) .pipe(clean())
-task 'runapp', shell.task ['node dist/examples/sockio/app.js']
-task 'express',  ->
-  app = express()
-  app.use(require('connect-livereload')()) # play with tiny-lr to livereload stuffs
-  console.log __dirname
-  app.use(express.static(__dirname))
-  app.listen(4000)
-task 'copy', -> from(files.copy, {cache:'copy'}).to(folders.destjs)
+task 'clean', -> src([folders_destjs].concat(files_twosideInNpm).concat([folders_twosideInNpmClient]), {read:false}) .pipe(clean())
+task 'copy', -> from(files_copy, {cache:'copy'}).to(folders_dest)
 task 'coffee', ->
-  from(files.coffee, {cache:'coffee'}).pipelog(coffee({bare: true})).to(folders.destjs)
-  from(files.twosideInNpmCoffee, {cache:'coffee2'}).pipelog(coffee({bare: true})).to(folders.twosideInNpm)
-
+  from(files_coffee, {cache:'coffee'}).pipelog(coffee({bare: true})).to(folders_destjs)
+  from(files_twosideInNpmCoffee, {cache:'coffee2'}).pipelog(coffee({bare: true})).to(folders_twosideInNpm)
 task 'twoside', ['copy', 'coffee'], (cb) ->
-  for pat in patterns(files.twoside...)
-    stream = src(pat.src).pipelog(twoside('f:/twoside/dist', 'twoside-sample')).to(pat.dest)
-  for pat in patterns(files.twosideInNpm...)
-    stream = src(pat.src).pipelog(twoside('f:/twoside/'+folders.twosideInNpm, 'twoside-in-npm')).to(pat.dest)
-  stream
-gulp.task 'browserify', ['coffee'], ->
-  src(folders.destjs+'/test/karma/karma-bundle.js').pipe(browserify({
-    insertGlobals : true,
-    #debug : !gulp.env.production
-  }))
-  .to(folders.destjs+'/test/karma')
-gulp.task 'concat', ['twoside'], ->
-#  twosideInNpm = folders.twosideInNpm
-#  src([twosideInNpm+'/npm1.js', twosideInNpm+'/index.js']).pipe(concat('twoside-in-npm.js'))
-#  .to(folders.twosideInNpm)
-  src(files.concat).pipe(concat("twoside-sample.js")).to(folders.destjs)
+  for pat in patterns(files_twoside...)
+    stream = src(pat.src).pipelog(twoside(folders_destjs, 'twoside-sample')).to(pat.dest)
+    stream = src(pat.src).pipelog(twoside(folders_destjs, 'twoside-sample', {only_wrap_for_browser:true})).to(pat.dest+'/clientside')
+  for pat in patterns(files_twosideInNpm...)
+    stream = src(pat.src).pipelog(twoside(folders_twosideInNpm, 'twoside-in-npm')).to(pat.dest)
+    stream = src(pat.src).pipelog(twoside(folders_twosideInNpm, 'browser-twoside-in-npm', {only_wrap_for_browser:true})).to(pat.dest+'/clientside')
+  folders_twoside_lib = folders_destjs+'/lib'
+  files_twoside_lib = [folders_twoside_lib+'/index.js', folders_twoside_lib+'/lib1.js', folders_twoside_lib+'/lib2.js']
+  src(files_twoside_lib).pipelog(twoside(folders_twoside_lib, 'lib-package')).to(folders_twoside_lib)
+  src(files_twoside_lib).pipelog(twoside(folders_twoside_lib, 'browser-lib-package', {only_wrap_for_browser:true})).to(folders_twoside_lib+'/clientside')
+  src(files_twoside_lib[2]).pipelog(twoside(folders_twoside_lib, 'lib-package', {'/lib2':''}))
+  .pipe(rename(basename: "lib2-as-lib-package")).to(folders_twoside_lib)
+  src(files_twoside_lib[2]).pipelog(twoside(folders_twoside_lib, 'browser-lib-package', {only_wrap_for_browser:true, '/lib2':''}))
+  .pipe(rename(basename: "lib2-as-browser-lib-package")).to(folders_twoside_lib+'/clientside')
 
-gulp.task 'min', ['concat'], ->
-  src(folders.destjs+'/twoside-sample.js').pipe(closureCompiler()).pipe(rename(suffix: "-min"))
-  .pipe(size(showFiles:true)).to(folders.destjs)
-  src(folders.destjs+'/twoside.js').pipe(closureCompiler()).pipe(rename(suffix: "-min"))
-  .pipe(size(showFiles:true)).to(folders.destjs)
-#  src(folders.twosideInNpm+'/twoside-in-npm.js').pipe(closureCompiler()).pipe(rename(suffix: "-min"))
-#  .pipe(size(showFiles:true)).to(folders.twosideInNpm)
+gulp.task 'min', ['twoside'], ->
+  src(files_concat).pipe(concat("twoside-sample.js")).to(folders_destjs)
+  .pipe(closureCompiler()).pipe(rename(suffix: "-min"))
+  .pipe(size(showFiles:true)).to(folders_destjs)
+  src(files_concatClient).pipe(concat("twoside-sample.js")).to(folders_destjsClient)
+  .pipe(closureCompiler()).pipe(rename(suffix: "-min"))
+  .pipe(size(showFiles:true)).to(folders_destjsClient)
+  src(folders_destjs+'/twoside.js').pipe(closureCompiler()).pipe(rename(suffix: "-min"))
+  .pipe(size(showFiles:true)).to(folders_destjs)
 
-onErrorContinue = (err) -> console.log(err.stack); @emit 'end'
-#onErrorContinue = (err) -> @emit 'end'
-task 'mocha', ->
-  src(files.mocha)
-#  .pipelog(plumber())
-  .pipe(mocha({reporter: 'dot'})).on("error", onErrorContinue)
-task 'karma', -> src(files.karma).pipe(karma({configFile: folders.destjs+'/test/karma-conf', action: 'run'}))     # run: once, watch: autoWatch=true
-task 'stylus', -> from(['css/**/*.css']).pipe(styl({compress: true})).to(folders.destjs)
-task 'tinylr', -> server.listen 35729, (err) -> if err then console.log(err)
-task 'watch/copy', -> watch files.copy, ['copy']
-task 'watch/coffee', -> watch files.coffee, ['coffee']
-task 'watch/mocha', -> watch [files.modulejs, files.serverjs, files.mocha], ['mocha']
-#task 'watch:mocha', ->
-#  src([files.modulejs, files.serverjs, files.mocha])
-#  .pipe(plumber())
-#  .pipe pluginwatch emit: 'all', (files) ->
-#    files.pipe(mocha(reporter: 'dot' ))
-#    .on 'error', onErrorContinue
-onWatchReload = (event) -> src(event.path, {read: false}).pipe(livereload(tinylrServer))
-task 'watch/reload', -> tinylrServer = tinylr(); tinylrServer.listen(35729); watch files.reload,onWatchReload
-task 'watch/all', -> ['watch/copy', 'watch/coffee', 'watch/mocha', 'watch/reload'] #
+task 'watch/copy', -> watch files_copy, ['copy']
+task 'watch/coffee', -> watch files_coffee, ['coffee']
+task 'watch/all', -> ['watch/copy', 'watch/coffee'] #
 task 'build', ['copy', 'min']
-task 'mocha/auto', ['watch/copy', 'watch/coffee', 'watch/mocha']
 task 'default',['build', 'watch:all']
