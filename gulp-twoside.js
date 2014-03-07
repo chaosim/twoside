@@ -27,7 +27,7 @@ module.exports = function(basepath, packageName, pathMap) {
     var mappath = removeExtname(padpath).slice(packageName.length);
     console.log(mappath);
     if (pathMap[mappath]!==undefined)
-      if (pathMap[mappath]!=='') padpath = packageName+'/'+pathMap[mappath];
+      if (pathMap[mappath]!=='') padpath = packageName+pathMap[mappath];
       else padpath = packageName;
 
 //    console.log(filename);
