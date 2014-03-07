@@ -12,6 +12,7 @@
   "bugs": {
       "url": "https://github.com/chaosim/twoside/issues"
     },
+  "files": ["src/", "public/", "node_modules/twoside-in-npm/", "dist"],
   "licenses": [
     {
       "type": "MIT",
@@ -26,12 +27,10 @@
   "devDependencies": {
     "gulp": "*",
     "gulp-clean": "*",
-    "gulp-copy": "*",
     "gulp-coffee": "*",
     "coffee-script": "1.7.0",
     "gulp-concat": "*",
     "gulp-closure-compiler": "*",
-    "gulp-size": "*",
-    "gulp-uglifyjs":"*"
+    "gulp-size": "*"
   }
 }

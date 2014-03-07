@@ -10,4 +10,3 @@ temp*.*
 npm-debug.log
 dist
 dev
-dist
